@@ -91,8 +91,9 @@ class DeepInnovatorAgentLoop(ToolAgentLoop):
                 print(f"Assistant: ...{messages_lst[-1][prev_msg_len - 1].content[-100:]}")
                 print(f"User:      {messages_lst[-1][prev_msg_len].content[:100]}...")
 
-        response_ids = agent_data.prompt_ids[-len(agent_data.response_mask) :]
-        prompt_ids = agent_data.prompt_ids[: len(agent_data.prompt_ids) - len(agent_data.response_mask)]
+        response_length = len(agent_data.response_mask)
+        response_ids = agent_data.prompt_ids[-response_length:] if response_length else []
+        prompt_ids = agent_data.prompt_ids[:-response_length] if response_length else agent_data.prompt_ids
         multi_modal_data = {"image": agent_data.image_data} if agent_data.image_data is not None else {}
 
         output = AgentLoopOutput(
