@@ -109,13 +109,15 @@ def _is_result_empty(result: dict, data_key: str) -> bool:
     Returns:
         True if result is empty, False otherwise
     """
-    if not result or not isinstance(result, dict):
+    if not isinstance(result, dict):
         return True
-    if 'metadata' not in result:
+    metadata = result.get('metadata')
+    if not isinstance(metadata, dict):
         return True
-    metadata = result.get('metadata', {})
-    data_array = metadata.get(data_key, [])
-    return not data_array or len(data_array) == 0
+    data_array = metadata.get(data_key)
+    if not isinstance(data_array, list) or not data_array:
+        return True
+    return any(not isinstance(item, dict) for item in data_array)
 
 
 def step3_paper_analysis(DATAPATH: str):
