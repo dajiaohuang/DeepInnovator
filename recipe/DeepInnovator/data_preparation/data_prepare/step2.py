@@ -168,14 +168,15 @@ def step2_paper_analysis(
                     group_id = result.get('group_id')
                     if not isinstance(group_id, str) or not isinstance(result.get('group_description'), str):
                         continue
-                    if not any(group.get('group_id') == group_id for group in paper_profile.paper_group):
-                        continue
                     result['group_content'] = this_paper_memory
                     UPDATE_FLAG = paper_profile.update_paper_group(result)
                     if UPDATE_FLAG:
                         break
                 if not UPDATE_FLAG:
-                    print(f"Failed to update paper group after {max_update_attempts} attempts; leaving paper memory available for a later retry.")
+                    raise RuntimeError(
+                        f"Failed to update paper group after {max_update_attempts} attempts. "
+                        "Paper memory is saved; reconcile its routing state before retrying."
+                    )
                
         # Process new paper creation
         if creator_tasks:
